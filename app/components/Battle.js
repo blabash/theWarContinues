@@ -86,14 +86,44 @@ PlayerInput.propTypes = {
 };
 
 export default class Battle extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      playerOne: null,
+      playerTwo: null,
+    };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(id, playerName) {
+    this.setState({
+      [id]: playerName,
+    });
+  }
+
   render() {
     return (
       <React.Fragment>
         <Instructions />
-        <PlayerInput
-          label={'Enter your Github username:'}
-          onSubmit={(value) => console.log(value)}
-        />
+        {!this.state.playerOne && (
+          <PlayerInput
+            label={'Player One:'}
+            onSubmit={(playerName) =>
+              this.handleSubmit('playerOne', playerName)
+            }
+          />
+        )}
+
+        {!this.state.playerTwo && (
+          <PlayerInput
+            label={'Player Two:'}
+            onSubmit={(playerName) =>
+              this.handleSubmit('playerTwo', playerName)
+            }
+          />
+        )}
       </React.Fragment>
     );
   }

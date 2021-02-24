@@ -101,6 +101,10 @@ li {
   background: transparent;
 }
 
+.btn-space {
+  margin: 48px;
+}
+
 .nav-link {
   font-size: 18px;
   font-weight: bold;

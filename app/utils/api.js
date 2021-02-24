@@ -1,4 +1,4 @@
-import { andThen, ifElse, isEmpty, pipe, prop, tap } from 'ramda';
+import { andThen, pipe, prop, sortBy, reduce, bind, ap, tap } from 'ramda';
 
 function getErrorMsg(message, username) {
   if (message === 'Not Found') {
@@ -32,33 +32,33 @@ function getRepos(username) {
     });
 }
 
-function getStarCount(repos) {
-  return repos.reduce(
-    (count, { stargazers_count }) => count + stargazers_count,
-    0
-  );
-}
+const getStarCount = reduce(
+  (count, { stargazers_count }) => count + stargazers_count,
+  0
+);
 
 function calculateScore(followers, repos) {
   return followers * 3 + getStarCount(repos);
 }
 
-function getUserData(player) {
-  return Promise.all([getProfile(player), getRepos(player)]).then(
-    ([profile, repos]) => ({
-      profile,
-      score: calculateScore(profile.followers, repos),
-    })
-  );
-}
+const calculateProfileScores = (list) => {
+  const profiles = list.slice(0, list.length / 2);
+  const repos = list.slice(list.length / 2);
 
-export function battle(players) {
-  return Promise.all([getUserData(players[0]), getUserData(players[1])]).then(
-    (res) => {
-      return res.sort((a, b) => b.score - a.score);
-    }
-  );
-}
+  return profiles.map((profile, idx) => ({
+    profile,
+    score: calculateScore(profile.followers, repos[idx]),
+  }));
+};
+
+const log = bind(console.log, console);
+
+export const battle = pipe(
+  ap([getProfile, getRepos]),
+  bind(Promise.all, Promise), //Equivalent to (promises) => Promise.all(promises)
+  andThen(calculateProfileScores),
+  andThen(sortBy(prop('score')))
+);
 
 export function fetchPopularRepos(language) {
   const endpoint = window.encodeURI(

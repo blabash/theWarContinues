@@ -92,7 +92,7 @@ export default class Results extends Component {
     }
 
     return (
-      <div className='grid space-evenly container-sm'>
+      <div className='column flex-center'>
         <Card
           header={winner.score === loser.score ? 'Tie' : 'Winner'}
           subheader={`Score: ${winner.score.toLocaleString()}`}
@@ -100,7 +100,7 @@ export default class Results extends Component {
           href={winner.profile.html_url}
           name={winner.profile.login}
         >
-          <ProfileList profile={winner} />
+          <ProfileList profile={winner.profile} />
         </Card>
         <Card
           header={winner.score === loser.score ? 'Tie' : 'Loser'}
@@ -109,9 +109,18 @@ export default class Results extends Component {
           href={loser.profile.html_url}
           name={loser.profile.login}
         >
-          <ProfileList profile={loser} />
+          <ProfileList profile={loser.profile} />
         </Card>
+        <button className='btn dark-btn btn-space' onClick={this.props.onReset}>
+          Reset
+        </button>
       </div>
     );
   }
 }
+
+Results.propTypes = {
+  playerOne: PropTypes.string.isRequired,
+  playerTwo: PropTypes.string.isRequired,
+  onReset: PropTypes.func.isRequired,
+};

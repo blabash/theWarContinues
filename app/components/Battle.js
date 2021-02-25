@@ -95,17 +95,16 @@ function PlayerPreview({ username, onReset, label }) {
   return (
     <div className='column player'>
       <h3 className='player-label'>{label}</h3>
-      <div className='row bg-light'>
-        <div className='player-info'>
-          <img
-            src={`https://github.com/${username}.png?size=200`}
-            alt={`Avatar for ${username}`}
-            className='avatar-small'
-          />
-          <a href={`https://github.com/${username}`} className='link'>
-            {username}
-          </a>
-        </div>
+      <div className='column flex-center bg-light'>
+        <img
+          src={`https://github.com/${username}.png?size=200`}
+          alt={`Avatar for ${username}`}
+          className='avatar-small'
+        />
+        <a href={`https://github.com/${username}`} className='link'>
+          {username}
+        </a>
+
         <button className='btn-clear flex-center' onClick={onReset}>
           <FaTimesCircle color='rgb(194, 57, 42)' size={26} />
         </button>
@@ -150,7 +149,19 @@ export default class Battle extends Component {
     const { playerOne, playerTwo, battle } = this.state;
 
     if (battle === true) {
-      return <Results playerOne={playerOne} playerTwo={playerTwo} />;
+      return (
+        <Results
+          playerOne={playerOne}
+          playerTwo={playerTwo}
+          onReset={() =>
+            this.setState({
+              playerOne: null,
+              playerTwo: null,
+              battle: false,
+            })
+          }
+        />
+      );
     }
 
     return (

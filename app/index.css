@@ -102,7 +102,7 @@ li {
 }
 
 .btn-space {
-  margin: 48px;
+  margin: 48px auto;
 }
 
 .nav-link {

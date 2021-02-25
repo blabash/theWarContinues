@@ -8,8 +8,6 @@ import {
   ap,
   length,
   divide,
-  addIndex,
-  map,
   take,
   drop,
 } from 'ramda';
@@ -23,21 +21,16 @@ function calculateScore(followers, repos) {
   return followers * 3 + getStarCount(repos);
 }
 
-const mapIndexed = addIndex(map);
-
 const combineProfilesAndScores = (list) => {
-  const halfLengthList = divide(length(list), 2);
+  const halfOf = divide(length(list), 2);
 
-  const profiles = take(halfLengthList)(list);
-  const repos = drop(halfLengthList)(list);
+  const profiles = take(halfOf)(list);
+  const repos = drop(halfOf)(list);
 
-  return mapIndexed(
-    (profile, idx) => ({
-      profile,
-      score: calculateScore(profile.followers, repos[idx]),
-    }),
-    profiles
-  );
+  return profiles.map((profile, idx) => ({
+    profile,
+    score: calculateScore(profile.followers, repos[idx]),
+  }));
 };
 
 function getErrorMsg(message, username) {

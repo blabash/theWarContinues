@@ -1,4 +1,44 @@
-import { andThen, pipe, prop, sortBy, reduce, bind, ap, tap } from 'ramda';
+import {
+  andThen,
+  pipe,
+  prop,
+  sortBy,
+  reduce,
+  bind,
+  ap,
+  length,
+  divide,
+  addIndex,
+  map,
+  take,
+  drop,
+} from 'ramda';
+
+const getStarCount = reduce(
+  (count, { stargazers_count }) => count + stargazers_count,
+  0
+);
+
+function calculateScore(followers, repos) {
+  return followers * 3 + getStarCount(repos);
+}
+
+const mapIndexed = addIndex(map);
+
+const combineProfilesAndScores = (list) => {
+  const halfLengthList = divide(length(list), 2);
+
+  const profiles = take(halfLengthList)(list);
+  const repos = drop(halfLengthList)(list);
+
+  return mapIndexed(
+    (profile, idx) => ({
+      profile,
+      score: calculateScore(profile.followers, repos[idx]),
+    }),
+    profiles
+  );
+};
 
 function getErrorMsg(message, username) {
   if (message === 'Not Found') {
@@ -32,31 +72,10 @@ function getRepos(username) {
     });
 }
 
-const getStarCount = reduce(
-  (count, { stargazers_count }) => count + stargazers_count,
-  0
-);
-
-function calculateScore(followers, repos) {
-  return followers * 3 + getStarCount(repos);
-}
-
-const calculateProfileScores = (list) => {
-  const profiles = list.slice(0, list.length / 2);
-  const repos = list.slice(list.length / 2);
-
-  return profiles.map((profile, idx) => ({
-    profile,
-    score: calculateScore(profile.followers, repos[idx]),
-  }));
-};
-
-const log = bind(console.log, console);
-
 export const battle = pipe(
   ap([getProfile, getRepos]),
   bind(Promise.all, Promise), //Equivalent to (promises) => Promise.all(promises)
-  andThen(calculateProfileScores),
+  andThen(combineProfilesAndScores),
   andThen(sortBy(prop('score')))
 );
 

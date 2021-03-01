@@ -47,6 +47,12 @@ li {
   padding: 10px;
 }
 
+.dark {
+  color: #dadada;
+  background: rgb(19, 19, 19);
+  min-height: 100vh;
+}
+
 .player-label {
   font-size: 20px;
   margin: 5px 0;
@@ -99,10 +105,16 @@ li {
 .btn-clear {
   border: none;
   background: transparent;
+  cursor: pointer;
 }
 
 .btn-space {
   margin: 48px auto;
+}
+
+.nav {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .nav-link {

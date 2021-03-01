@@ -7,7 +7,7 @@ import {
   FaTimesCircle,
 } from 'react-icons/fa';
 import { ThemeConsumer } from '../contexts/theme';
-import Results from './Results';
+import { Link } from 'react-router-dom';
 
 function Instructions() {
   return (
@@ -151,7 +151,6 @@ export default class Battle extends Component {
     this.state = {
       playerOne: null,
       playerTwo: null,
-      battle: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -171,23 +170,7 @@ export default class Battle extends Component {
   }
 
   render() {
-    const { playerOne, playerTwo, battle } = this.state;
-
-    if (battle === true) {
-      return (
-        <Results
-          playerOne={playerOne}
-          playerTwo={playerTwo}
-          onReset={() =>
-            this.setState({
-              playerOne: null,
-              playerTwo: null,
-              battle: false,
-            })
-          }
-        />
-      );
-    }
+    const { playerOne, playerTwo } = this.state;
 
     return (
       <React.Fragment>
@@ -223,12 +206,15 @@ export default class Battle extends Component {
         )}
 
         {playerOne && playerTwo && (
-          <button
+          <Link
+            to={{
+              pathname: `/battle/results`,
+              search: `?playerOne=${playerOne}&playerTwo=${playerTwo}`,
+            }}
             className='btn dark-btn btn-space'
-            onClick={() => this.setState({ battle: true })}
           >
             Battle
-          </button>
+          </Link>
         )}
       </React.Fragment>
     );

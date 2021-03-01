@@ -12,6 +12,7 @@ import {
 import Card from './Card';
 import Loading from './Loading';
 import Tooltip from './Tooltip';
+import { Link } from 'react-router-dom';
 
 function ProfileList({ profile }) {
   return (
@@ -69,7 +70,9 @@ export default class Results extends Component {
   }
 
   componentDidMount() {
-    const { playerOne, playerTwo } = this.props;
+    const params = new URLSearchParams(this.props.location.search);
+    const playerOne = params.get('playerOne');
+    const playerTwo = params.get('playerTwo');
 
     battle([playerOne, playerTwo])
       .then((players) => {
@@ -117,16 +120,10 @@ export default class Results extends Component {
         >
           <ProfileList profile={loser.profile} />
         </Card>
-        <button className='btn dark-btn btn-space' onClick={this.props.onReset}>
+        <Link className='btn dark-btn btn-space' to='/battle'>
           Reset
-        </button>
+        </Link>
       </div>
     );
   }
 }
-
-Results.propTypes = {
-  playerOne: PropTypes.string.isRequired,
-  playerTwo: PropTypes.string.isRequired,
-  onReset: PropTypes.func.isRequired,
-};

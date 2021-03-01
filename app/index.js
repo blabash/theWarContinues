@@ -6,11 +6,7 @@ import { ThemeProvider } from './contexts/theme';
 import Popular from './components/Popular';
 import Battle from './components/Battle';
 import Nav from './components/Nav';
-
-//Component
-//State
-//Lifecycle
-//UI
+import Results from './components/Results';
 
 class App extends Component {
   constructor(props) {
@@ -34,7 +30,8 @@ class App extends Component {
               <Nav />
 
               <Route exact path='/' component={Popular} />
-              <Route path='/battle' component={Battle} />
+              <Route exact path='/battle' component={Battle} />
+              <Route path='/battle/results' component={Results} />
             </div>
           </div>
         </ThemeProvider>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { battle } from '../utils/api';
 import {
@@ -57,73 +57,60 @@ ProfileList.propTypes = {
   profile: PropTypes.object.isRequired,
 };
 
-export default class Results extends Component {
-  constructor(props) {
-    super(props);
+export default function Results({ location }) {
+  const [winner, setWinner] = useState(null);
+  const [loser, setLoser] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    this.state = {
-      winner: null,
-      loser: null,
-      error: null,
-      loading: true,
-    };
-  }
-
-  componentDidMount() {
-    const params = new URLSearchParams(this.props.location.search);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
     const playerOne = params.get('playerOne');
     const playerTwo = params.get('playerTwo');
 
     battle([playerOne, playerTwo])
       .then((players) => {
-        this.setState({
-          winner: players[1],
-          loser: players[0],
-          loading: false,
-        });
+        setWinner(players[1]);
+        setLoser(players[0]);
+        setLoading(false);
       })
       .catch((e) => {
-        this.setState({
-          error: e.message,
-          loading: false,
-        });
+        setError(e.message);
+        setLoading(false);
       });
+  }, []);
+
+  if (loading === true) {
+    return <Loading text='Battling' speed={100} />;
   }
-  render() {
-    const { winner, loser, error, loading } = this.state;
 
-    if (loading === true) {
-      return <Loading text='Battling' speed={100} />;
-    }
-
-    if (error) {
-      return <p>{error}</p>;
-    }
-
-    return (
-      <div className='flex-center'>
-        <Card
-          header={winner.score === loser.score ? 'Tie' : 'Winner'}
-          subheader={`Score: ${winner.score.toLocaleString()}`}
-          avatar={winner.profile.avatar_url}
-          href={winner.profile.html_url}
-          name={winner.profile.login}
-        >
-          <ProfileList profile={winner.profile} />
-        </Card>
-        <Card
-          header={winner.score === loser.score ? 'Tie' : 'Loser'}
-          subheader={`Score: ${loser.score.toLocaleString()}`}
-          avatar={loser.profile.avatar_url}
-          href={loser.profile.html_url}
-          name={loser.profile.login}
-        >
-          <ProfileList profile={loser.profile} />
-        </Card>
-        <Link className='btn dark-btn btn-space' to='/battle'>
-          Reset
-        </Link>
-      </div>
-    );
+  if (error) {
+    return <p>{error}</p>;
   }
+
+  return (
+    <div className='flex-center'>
+      <Card
+        header={winner.score === loser.score ? 'Tie' : 'Winner'}
+        subheader={`Score: ${winner.score.toLocaleString()}`}
+        avatar={winner.profile.avatar_url}
+        href={winner.profile.html_url}
+        name={winner.profile.login}
+      >
+        <ProfileList profile={winner.profile} />
+      </Card>
+      <Card
+        header={winner.score === loser.score ? 'Tie' : 'Loser'}
+        subheader={`Score: ${loser.score.toLocaleString()}`}
+        avatar={loser.profile.avatar_url}
+        href={loser.profile.html_url}
+        name={loser.profile.login}
+      >
+        <ProfileList profile={loser.profile} />
+      </Card>
+      <Link className='btn dark-btn btn-space' to='/battle'>
+        Reset
+      </Link>
+    </div>
+  );
 }

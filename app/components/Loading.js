@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const styles = {
@@ -12,40 +12,22 @@ const styles = {
   },
 };
 
-export default class Loading extends Component {
-  constructor(props) {
-    super(props);
+export default function Loading({ text = 'Loading', speed = 300 }) {
+  const [content, setContent] = useState(text);
 
-    this.state = {
-      content: props.text,
-    };
-  }
-
-  componentDidMount() {
-    const { text, speed } = this.props;
-
-    this.interval = window.setInterval(() => {
-      this.state.content === text + '...'
-        ? this.setState({ content: text })
-        : this.setState(({ content }) => ({ content: content + '.' }));
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      content === text + '...' ? setContent(text) : setContent((c) => c + '.');
     }, speed);
-  }
+    return () => {
+      window.clearInterval(id);
+    };
+  }, [content]);
 
-  componentWillUnmount() {
-    window.clearInterval(this.interval);
-  }
-
-  render() {
-    return <p style={styles.content}>{this.state.content}</p>;
-  }
+  return <p style={styles.content}>{content}</p>;
 }
 
 Loading.propTypes = {
   text: PropTypes.string,
   speed: PropTypes.number,
-};
-
-Loading.defaultProps = {
-  text: 'Loading',
-  speed: 300,
 };
